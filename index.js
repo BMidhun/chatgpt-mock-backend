@@ -39,6 +39,8 @@ server.post("/chat", async (req,res) => {
             assistantText += choice.message?.content ? choice.message.content : '';
         }
 
+        assistantText = assistantText.normalize();
+
         return res.status(200).json({returnCode:0,assistantText})
 
     } catch (error) {
