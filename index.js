@@ -1,15 +1,22 @@
 const express = require("express");
 const cors = require("cors");
+const dotenv = require("dotenv");
+
 const { callChatGPTChat } = require("./utils");
 
 const server = express();
 
 //middlewares
+dotenv.config();
 server.use(express.urlencoded({extended:false}));
 server.use(express.json());
 server.use(cors());
 
 //routes
+server.get("/", async(req,res) => {
+     res.json("Hello World")
+})
+
 server.post("/chat", async (req,res) => {
 
     const body = req.body;
