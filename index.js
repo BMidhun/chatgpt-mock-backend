@@ -3,6 +3,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 
 const { callChatGPTChat } = require("./utils");
+const compression = require("compression");
 
 const server = express();
 
@@ -11,6 +12,7 @@ dotenv.config();
 server.use(express.urlencoded({extended:false}));
 server.use(express.json());
 server.use(cors());
+server.use(compression({level:9}))
 
 //routes
 server.get("/", async(req,res) => {
@@ -21,7 +23,7 @@ server.post("/chat", async (req,res) => {
 
     const body = req.body;
     const {message} = body;
-
+    let assistantText = '';
     console.log("User message::", message);
 
     try {
@@ -33,20 +35,31 @@ server.post("/chat", async (req,res) => {
     
         console.log("CHATGPT Response::", choices);
     
-        let assistantText = '';
+       
 
         for(let choice of choices) {
             assistantText += choice.message?.content ? choice.message.content : '';
         }
 
-        assistantText = assistantText.normalize();
+        // assistantText = assistantText.normalize();
 
-        return res.status(200).json({returnCode:0,assistantText})
+        // return res.status(200).json({returnCode:0,assistantText})
+    
 
     } catch (error) {
         return res.status(500).json({returnCode:-1,assistantText:null})
     }
   
+    res.write(JSON.stringify({returnCode:0, assistantText}),(err) => {
+        console.log("Error", err)
+    });
+
+    res.on('error', (err) => {
+        console.log("response error:", err);
+        return  res.status(500).json({returnCode:-1,assistantText:null})
+    })
+
+    res.end();
 
 })
 
