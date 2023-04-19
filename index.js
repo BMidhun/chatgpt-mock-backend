@@ -44,7 +44,7 @@ server.post("/chat", async (req,res) => {
 
     } catch (error) {
         console.log("ERROR::", error);
-        return res.status(500).json({returnCode:-1,assistantText:null})
+        return res.status(500).json({returnCode:-2,assistantText:null})
     }
 
 })
